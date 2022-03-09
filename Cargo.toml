@@ -1,13 +1,21 @@
 [package]
-name = "ncmdump"
-version = "0.2.1"
-authors = ["lucifer9 <lucifer9@gmail.com>"]
+name = "ncmdump-rust"
+version = "0.2.2"
+authors = ["lucifer9 <lucifer9@gmail.com>", "maghsk <maghsk2017@gmail.com>"]
 edition = "2018"
 
+description = "Convert ncm files from netease to normal flac or mp3. Rust version."
+readme = "README.md"
+license = "MIT"
+keywords = ["music"]
+categories = ["command-line-utilities"]
+repository = "https://github.com/maghsk/ncmdump-rust"
+
 [dependencies]
-json = "*"
+json = "0.12.4"
 base64 = "0.13.0"
 byteorder = "1"
+clap = "3.1.6"
 id3 = "0.6.4"
 metaflac = "0.2"
 rust-crypto = "^0.2"
