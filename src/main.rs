@@ -164,7 +164,7 @@ fn process_file(path: &std::path::Path) -> std::io::Result<()> {
     };
     let mut buffer = [0u8; 0x8000];
     let mut tmp = NamedTempFile::new()?;
-    let mut format = "undefined";
+    // let mut format = "undefined";
     loop {
         let n = f.read(&mut buffer)?;
         if n == 0 {
@@ -175,17 +175,26 @@ fn process_file(path: &std::path::Path) -> std::io::Result<()> {
             *x ^= kbox[(kbox[j] as usize + kbox[(kbox[j] as usize + j) & 0xff] as usize) & 0xff];
         }
         tmp.write(&buffer)?;
-        if n > 2 {
-            if format == "undefined" {
-                format = if buffer[0..2] == [0x49, 0x44, 0x33] {
-                    "mp3"
-                } else {
-                    "flac"
-                };
-            }
-        }
+        // if n > 2 {
+        //     if format == "undefined" {
+        //         format = if buffer[0..2] == [0x49, 0x44, 0x33] {
+        //             "mp3"
+        //         } else {
+        //             "flac"
+        //         };
+        //     }
+        // }
     }
-    let format = format;
+
+    let tag = metaflac::Tag::read_from_path(tmp.path());
+    let is_flac = match tag {
+        Ok(_) => true,
+        Err(_) => false,
+    };
+
+    let format = if is_flac { "flac" } else { "mp3" };
+
+    // let format = format;
     let filter_music_filename = music_filename + "." + format;
     // let mut fmusic = std::fs::File::create(std::path::Path::new(&filter_music_filename))?;
     std::fs::copy(
@@ -233,7 +242,7 @@ fn process_file(path: &std::path::Path) -> std::io::Result<()> {
             }
             tag.write_to_path(
                 std::path::Path::new(&filter_music_filename),
-                id3::Version::Id3v24,
+                id3::Version::Id3v23,
             )
             .expect("error writing MP3 file:");
         } else if format == "flac" {
